@@ -79,31 +79,35 @@ def create_plots(metrics, df):
 
     # make animation (function code is missing here)
 
-def animate_breathing(df, patient_id):
-    patient_data= df[df["PatientID"] == patient_id]
-    t = patient_data["Time"].values
-    v = patient_data["Volume"].values
+def animate_breathing(df, patient_id): # define function to animate breathing data for one patient
+    patient_data= df[df["PatientID"] == patient_id] # filter the dataframe to only keep rows for the chosen patient
+    t = patient_data["Time"].values # extract time values as NumPy array
+    v = patient_data["Volume"].values # extract volume values as NumPy array
 
-    fig, ax = plt.subplots(figsize=(6,4))
-    ax.set_xlim(min(t), max(t))
-    ax.set_ylim(min(v), max(v))
-    ax.set_xlabel("Time (s)")
-    ax.set_ylabel("volume (L)")
-    ax.set_title(f"Breathing Curve Over time - {patient_id}")
+    fig, ax = plt.subplots(figsize=(6,4)) # create figure and axis for the plot
+    ax.set_xlim(min(t), max(t)) # set x-axis limits based on minimum and maximum time values
+    ax.set_ylim(min(v), max(v)) # set y-axis limits based on minimum and maximum volume values
+    ax.set_xlabel("Time (s)") # label the x-axis
+    ax.set_ylabel("volume (L)") # label the y-axis
+    ax.set_title(f"Breathing Curve Over time - {patient_id}") # set title showing patient ID
 
-    line, = ax.plot([], [], lw=2)
-    print(line)
+    line, = ax.plot([], [], lw=2) # create an empty line object to be updated during animaton
+    print(line) # print the line onject for debugging
 
-    def animate(i):
-        x = t[:i]
-        y = v[:i]
-        line.set_data(x,y)
-        return line, 
+    def animate(i): # define animation fucntion that updates line data for each frame
+        x = t[:i] # use time values from start to the i-th point
+        y = v[:i] # use volume values from start to the i-th point
+        line.set_data(x,y) # update the line with the new data
+        return line, # return the updated line so FuncAnimation knows what to redraw
 
-    anim = animation.FuncAnimation(fig, animate, frames=len(t), interval = 200)
-    plt.show()
-    anim.save(f"{patient_id}_breathing_animation.mp4")
-
+    anim = animation.FuncAnimation( #create the animation object
+        fig, # figure to animate
+        animate, # animation function that updates the plot each frame
+        frames=len(t),  # number of frames equal to number of time points
+        interval = 200 # Delay between frames in milliseconds (controls speed)
+        ) 
+    plt.show() # display the animation
+    anim.save(f"{patient_id}_breathing_animation.mp4") # save the animation as an mp4 file
 
     
 def export_summary(metrics):
